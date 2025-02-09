@@ -18,7 +18,10 @@ class User {
 
   Map<String, dynamic> toJSON() {
     // ignore: deprecated_member_use
-    return {"name": name, "colour": colour.value.toRadixString(16).padLeft(8, '0')};
+    return {
+      "name": name,
+      "colour": colour.value.toRadixString(16).padLeft(8, '0')
+    };
   }
 
   void addItem(Item item) {
