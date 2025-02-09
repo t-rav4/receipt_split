@@ -1,32 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:receipt_split/services/colour_picker_service.dart';
 import 'package:receipt_split/services/preferences_service.dart';
+import 'package:receipt_split/widgets/list_user_item.dart';
 import 'package:receipt_split/widgets/styled_button.dart';
 
 import 'receipt_split_page.dart';
 import 'types/user.dart';
 
-List<Color> userPredefinedColours = [
-  Colors.redAccent,
-  Colors.pink,
-  Colors.purpleAccent,
-  Colors.deepPurple,
-  Colors.indigoAccent,
-  Colors.blue,
-  Colors.lightBlueAccent,
-  Colors.teal,
-  Colors.tealAccent,
-  Colors.green,
-  Colors.lightGreenAccent,
-  Colors.greenAccent,
-  Colors.yellow,
-  Colors.orange,
-  Colors.deepOrange,
-  Colors.brown,
-  Colors.grey,
-  Colors.blueGrey
-];
+const minRequiredUsers = 2;
 
 Color getRandomColour() {
   final random = Random();
@@ -75,7 +58,7 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
   }
 
   void goToReceiptSplit() async {
-    if (selectedUsers.length < 2) {
+    if (selectedUsers.length < minRequiredUsers) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Please select at least 2 users"),
         behavior: SnackBarBehavior.floating,
@@ -94,92 +77,13 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
     );
   }
 
-  void openColourSelectForUser(BuildContext context, User user) {
-    // Navigator.pop(context); // Close the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Select a colour"),
-          content: Padding(
-            padding: EdgeInsets.all(24),
-            child: Wrap(
-              spacing: 10.0,
-              runSpacing: 10.0,
-              children: userPredefinedColours
-                  .map(
-                    (colour) => GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          userOptions
-                              .firstWhere((u) => u.name == user.name)
-                              .colour = colour;
-                        });
-                        Navigator.pop(context); // Close pop-up
-                      },
-                      child: Container(
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                          border: user.colour == colour
-                              ? Border.all(
-                                  width: 4,
-                                  color: Colors.white,
-                                  strokeAlign: BorderSide.strokeAlignOutside,
-                                )
-                              : null,
-                          color: colour,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(100),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  void updateUser(User updatedUser) async {
+    setState(() {
+      var index = userOptions.indexWhere((u) => u.name == updatedUser.name);
+      userOptions[index] = updatedUser;
+    });
 
-  void showAddUserDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController controller = TextEditingController();
-
-        return AlertDialog(
-          title: const Text("Enter name"),
-          content: TextField(
-            textCapitalization: TextCapitalization.words,
-            controller: controller,
-            decoration: const InputDecoration(
-              labelText: "Name",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                String newName = controller.text.trim();
-                if (newName.isNotEmpty) {
-                  createNewUser(newName);
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text("Add"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
-          ],
-        );
-      },
-    );
+    await _saveUsers();
   }
 
   @override
@@ -193,64 +97,74 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back, size: 40),
             ),
-
-           
-            Text("Please select who you wish to split with!"),
             Expanded(
-              child: ListView.builder(
-                  itemCount: userOptions.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == userOptions.length) {
-                      return ElevatedButton(
-                        child: const Text("Add New User"),
-                        onPressed: () {
-                          showAddUserDialog(context);
-                        },
-                      );
-                    }
-                    User user = userOptions[index];
-                    return Material(
-                      child: ListTile(
-                        leading: GestureDetector(
-                          onTap: () {
-                            openColourSelectForUser(context, user);
-                          },
-                          child: Container(
-                            height: 32,
-                            width: 32,
-                            decoration: BoxDecoration(
-                              color: user.colour,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(100),
-                              ),
-                            ),
-                          ),
-                        ),
-                        title: Text(user.name),
-                        titleTextStyle: TextStyle(
-                            fontWeight: selectedUsers.contains(user)
-                                ? FontWeight.bold
-                                : null),
-                        selectedColor: Colors.white,
-                        selected: selectedUsers.contains(user),
-                        onTap: () {
-                          setState(() {
-                            if (selectedUsers.contains(user)) {
-                              selectedUsers.remove(user);
-                              return;
-                            }
-                            selectedUsers.add(user);
-                          });
-                        },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        "Please select who you wish to split with!",
+                        style: TextStyle(fontSize: 18),
                       ),
-                    );
-                  }),
+                    ),
+                    SizedBox(height: 16),
+                    Expanded(
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListView.builder(
+                          itemCount: userOptions.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == userOptions.length) {
+                              return ElevatedButton(
+                                child: const Text("Add New User"),
+                                onPressed: () {
+                                  showAddUserDialog(
+                                      context, (name) => createNewUser(name));
+                                },
+                              );
+                            }
+                            User user = userOptions[index];
+                            return ListUserItem(
+                              user: user,
+                              onPress: () {
+                                setState(() {
+                                  if (selectedUsers.contains(user)) {
+                                    selectedUsers.remove(user);
+                                    return;
+                                  }
+                                  selectedUsers.add(user);
+                                });
+                              },
+                              isSelected: selectedUsers.contains(user),
+                              updateUser: updateUser
+
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerRight,
+              child: StyledButton(
+                label: "Split",
+                onTap: () => goToReceiptSplit(),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton:
-          StyledButton(label: "Split", onTap: () => goToReceiptSplit()),
     );
   }
 }

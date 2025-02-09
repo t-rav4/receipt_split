@@ -25,4 +25,14 @@ class User {
     assignedItems.add(item);
   }
 
+  User copyWith({
+    String? name,
+    Color? colour,
+    List<Item>? assignedItems,
+  }) {
+    return User(
+      name: name ?? this.name,
+      colour: colour ?? this.colour,
+    )..assignedItems = assignedItems ?? this.assignedItems;
+  }
 }
