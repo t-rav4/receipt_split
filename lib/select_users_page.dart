@@ -95,13 +95,14 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
           children: [
             IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, size: 40),
+              icon: Icon(Icons.arrow_back_rounded, size: 40),
             ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 15.0,
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
@@ -110,7 +111,6 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
-                    SizedBox(height: 16),
                     Expanded(
                       child: Container(
                         padding:
@@ -119,7 +119,9 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
                           border: Border.all(color: Colors.grey, width: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 6),
                           itemCount: userOptions.length + 1,
                           itemBuilder: (context, index) {
                             if (index == userOptions.length) {
@@ -144,22 +146,21 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
                                 });
                               },
                               isSelected: selectedUsers.contains(user),
-                              updateUser: updateUser
-
+                              updateUser: updateUser,
                             );
                           },
                         ),
                       ),
                     ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: StyledButton(
+                        label: "Split",
+                        onTap: () => goToReceiptSplit(),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ),
-            Container(
-              alignment: Alignment.centerRight,
-              child: StyledButton(
-                label: "Split",
-                onTap: () => goToReceiptSplit(),
               ),
             ),
           ],

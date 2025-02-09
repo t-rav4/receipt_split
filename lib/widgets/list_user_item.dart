@@ -8,13 +8,12 @@ class ListUserItem extends StatefulWidget {
   final bool isSelected;
   final Function(User updatedUser) updateUser;
 
-  const ListUserItem({
-    super.key,
-    required this.user,
-    required this.onPress,
-    required this.isSelected,
-    required this.updateUser
-  });
+  const ListUserItem(
+      {super.key,
+      required this.user,
+      required this.onPress,
+      required this.isSelected,
+      required this.updateUser});
 
   @override
   State<ListUserItem> createState() => _ListUserItemState();
@@ -28,14 +27,15 @@ class _ListUserItemState extends State<ListUserItem> {
         leading: ColourPickNote(
           user: widget.user,
           onSelect: (user) {
-           widget.updateUser(user);
+            widget.updateUser(user);
           },
         ),
         title: Text(widget.user.name),
         titleTextStyle: TextStyle(
           fontWeight: widget.isSelected ? FontWeight.bold : null,
         ),
-        selectedColor: Colors.white,
+        selectedTileColor: Color.fromRGBO(217, 217, 217, 1),
+        selectedColor: Colors.black,
         selected: widget.isSelected,
         onTap: () => widget.onPress(),
       ),
