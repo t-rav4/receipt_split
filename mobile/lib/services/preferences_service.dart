@@ -8,7 +8,8 @@ class PreferenceService {
 
   static const String userKey = "saved_users";
 
-  static final PreferenceService _instance = PreferenceService._privateConstructor();
+  static final PreferenceService _instance =
+      PreferenceService._privateConstructor();
 
   factory PreferenceService() {
     return _instance;
@@ -19,6 +20,8 @@ class PreferenceService {
     String? usersJSON = prefs.getString(userKey);
     if (usersJSON != null) {
       final List<dynamic> decodedList = jsonDecode(usersJSON);
+      print("ok");
+      print(decodedList);
       return decodedList.map((json) => User.fromJson(json)).toList();
     }
     return [];
@@ -29,5 +32,13 @@ class PreferenceService {
     String jsonString = jsonEncode(users.map((user) => user.toJSON()).toList());
 
     await prefs.setString(userKey, jsonString);
+  }
+
+  Future<void> deleteUserById(String id) async {
+    List<User> users = await fetchSavedUsers();
+
+    users.removeWhere((u) => u.id == id);
+
+    await saveUsers(users);
   }
 }

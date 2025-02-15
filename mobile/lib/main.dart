@@ -1,18 +1,29 @@
+import 'dart:convert';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:receipt_split/receipt_split_page.dart';
 
 import 'package:receipt_split/select_users_page.dart';
+import 'package:receipt_split/services/user_service.dart';
+import 'package:receipt_split/types/user.dart';
 import 'package:receipt_split/widgets/card_button.dart';
+
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Feature 2: Capture photo of receipt to scan them instead, into app.
 //  source: https://pub.dev/packages/cunning_document_scanner
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(
       widgetsBinding:
           widgetsBinding); // Keeps the splash on screen until we call `remove()`
+
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -59,6 +70,32 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
   }
 
+  Future<void> uploadPdf(File file) async {
+    var uri = Uri.parse("http://10.0.2.2:8000/extract-receipt/");
+    var request = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      String responseBody = await response.stream.bytesToString();
+      Map<String, dynamic> jsonData = json.decode(responseBody);
+
+      List<Item> items = (jsonData['items'] as List)
+          .map((itemJson) => Item.fromJson(itemJson))
+          .toList();
+
+      print("Success: ${await response.stream.bytesToString()}");
+      print(items);
+
+      setState(() {
+
+      });
+      // return items; // Return the parsed list
+    } else {
+      print("Error: ${response.reasonPhrase}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<void> pickPdfFile() async {
@@ -73,7 +110,9 @@ class _LandingPageState extends State<LandingPage> {
         });
 
         if (result.files.single.path != "" && context.mounted) {
-          // TODO: weird needed check here
+          // File selectedFile = File(result.files.single.path!);
+
+          // await uploadPdf(selectedFile);
 
           Navigator.push(
             context,
@@ -100,11 +139,11 @@ class _LandingPageState extends State<LandingPage> {
                 onTap: pickPdfFile,
               ),
               CardButton(
-                icon: Icons.camera_alt_rounded,
-                label: "Take a photo of your receipt using your camera!",
-                onTap: () =>
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar),
-              ),
+                  icon: Icons.camera_alt_rounded,
+                  label: "Take a photo of your receipt using your camera!",
+                  onTap: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }),
             ],
           ),
         ),

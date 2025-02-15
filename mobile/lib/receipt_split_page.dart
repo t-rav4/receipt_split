@@ -272,6 +272,14 @@ class Item {
     int randomValue = Random().nextInt(10000); // Adding some randomness
     return '$timestamp-$randomValue';
   }
+
+    // Factory constructor to create an Item from JSON
+  factory Item.fromJson(Map<String, dynamic> json) {
+    return Item(
+      name: json['name'],
+      price: (json['price'] as num).toDouble(), isSelected: false, // Ensuring it's a double
+    );
+  }
 }
 
 List<Item> extractItems(String extractedPdfText) {
