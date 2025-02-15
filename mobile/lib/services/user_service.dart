@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:receipt_split/services/preferences_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:receipt_split/types/user.dart';
@@ -36,12 +35,10 @@ class UserService {
 
   Future<User> createUser(String name, Color colour) async {
     try {
-      // String colourHex = colour.value.toRadixString(16).padLeft(8, '0');
       String colourHex =
           colour.value.toRadixString(16).padLeft(8, '0').substring(2, 8);
       Map<String, dynamic> request = {"name": name, "colour": colourHex};
 
-      print("Request to create: ${request}");
       final response = await http.post(Uri.parse('$_apiUrl/users/'),
           headers: {
             "Content-Type": "application/json", // Ensure JSON header
@@ -74,8 +71,6 @@ class UserService {
       if (response.statusCode == 200) {
         dynamic data = json.decode(response.body);
         User user = User.fromJson(data);
-
-        print("Updated user? " + user.toString());
         return user;
       } else {
         throw Exception('Failed to update user');
@@ -87,7 +82,7 @@ class UserService {
 
   Future<void> deleteUserById(String id) async {
     Map<String, dynamic> request = {id: id};
-    final response = await http.delete(Uri.parse('$_apiUrl/users/$id'),
+    await http.delete(Uri.parse('$_apiUrl/users/$id'),
         headers: {
           "Content-Type": "application/json", // Ensure JSON header
         },

@@ -45,7 +45,6 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
 
   Future<void> _fetchUsersFromApi() async {
     List<User> fetchedUsers = await userSerivce.getUsers();
-    print("UIsers were fetched or?");
     setState(() {
       userOptions = fetchedUsers;
       fetchingUsers = false;
@@ -56,7 +55,6 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
     final colour = getRandomColour();
 
     User createdUser = await userSerivce.createUser(name, colour);
-    print("Created user.." + createdUser.toString());
 
     setState(() {
       userOptions.add(createdUser);

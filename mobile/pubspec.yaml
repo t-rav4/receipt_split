@@ -36,7 +36,6 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   file_picker: ^8.0.0+1
-  read_pdf_text: ^0.2.3
   shared_preferences: ^2.3.5
   flutter_native_splash: ^2.4.4
   flutter_launcher_icons: ^0.14.3

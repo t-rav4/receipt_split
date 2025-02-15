@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:read_pdf_text/read_pdf_text.dart';
+import 'package:receipt_split/services/split_service.dart';
 import 'package:receipt_split/split_summary_page.dart';
 import 'package:receipt_split/types/user.dart';
 
@@ -20,8 +21,8 @@ class ReceiptSplitPage extends StatefulWidget {
 class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
   User? selectedUser;
 
+  var splitService = SplitService();
   var isExtractingText = false;
-  String extractedText = "";
 
   List<Item> purchasedItems = [];
 
@@ -42,8 +43,8 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
     try {
       setState(() => isExtractingText = true);
 
-      String text = await ReadPdfText.getPDFtext(widget.pdf);
-      var items = extractItems(text);
+      File file = File(widget.pdf);
+      List<Item> items = await splitService.extractItemsFromReceipt(file);
 
       // Init the map for item to users to empty
       Map<Item, User?> emptyItemToUserMap = {
@@ -55,7 +56,6 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
 
       setState(() {
         purchasedItems = items;
-        extractedText = text.isNotEmpty ? text : 'No text found in this PDF.';
         isExtractingText = false;
         itemToUserRecord = emptyItemToUserMap;
         userCosts = emptyUserCostsMap;
@@ -63,8 +63,9 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
 
       calculateSplitCosts();
     } catch (e) {
+      print("An error ocurred ${e.toString()}");
       setState(() {
-        extractedText = 'Failed to extract text: $e';
+        isExtractingText = false;
       });
     }
   }
@@ -273,11 +274,12 @@ class Item {
     return '$timestamp-$randomValue';
   }
 
-    // Factory constructor to create an Item from JSON
+  // Factory constructor to create an Item from JSON
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       name: json['name'],
-      price: (json['price'] as num).toDouble(), isSelected: false, // Ensuring it's a double
+      price: (json['price'] as num).toDouble(),
+      isSelected: false,
     );
   }
 }

@@ -70,59 +70,32 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
   }
 
-  Future<void> uploadPdf(File file) async {
-    var uri = Uri.parse("http://10.0.2.2:8000/extract-receipt/");
-    var request = http.MultipartRequest('POST', uri)
-      ..files.add(await http.MultipartFile.fromPath('file', file.path));
-
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      String responseBody = await response.stream.bytesToString();
-      Map<String, dynamic> jsonData = json.decode(responseBody);
-
-      List<Item> items = (jsonData['items'] as List)
-          .map((itemJson) => Item.fromJson(itemJson))
-          .toList();
-
-      print("Success: ${await response.stream.bytesToString()}");
-      print(items);
-
-      setState(() {
-
-      });
-      // return items; // Return the parsed list
-    } else {
-      print("Error: ${response.reasonPhrase}");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Future<void> pickPdfFile() async {
+      // Opens file picker - select PDF
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
       );
 
-      if (result != null) {
-        setState(() {
-          selectedPdf = result.files.single.path;
-        });
-
-        if (result.files.single.path != "" && context.mounted) {
-          // File selectedFile = File(result.files.single.path!);
-
-          // await uploadPdf(selectedFile);
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  SelectUsersPage(selectedPdf: result.files.single.path!),
-            ),
-          );
-        }
+      if (result == null ||
+          result.files.single.path == "" ||
+          !context.mounted) {
+        return;
       }
+
+      setState(() {
+        selectedPdf = result.files.single.path;
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              SelectUsersPage(selectedPdf: result.files.single.path!),
+        ),
+      );
     }
 
     return Scaffold(
