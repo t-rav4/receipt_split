@@ -1,10 +1,11 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:receipt_split/models/item.dart';
 import 'package:receipt_split/services/split_service.dart';
 import 'package:receipt_split/split_summary_page.dart';
-import 'package:receipt_split/types/user.dart';
+import 'package:receipt_split/models/user.dart';
+import 'package:receipt_split/widgets/page_layout.dart';
+import 'package:receipt_split/widgets/styled_button.dart';
 
 class ReceiptSplitPage extends StatefulWidget {
   final List<User> users;
@@ -35,7 +36,6 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
   @override
   void initState() {
     extractTextFromPdf();
-
     super.initState();
   }
 
@@ -135,176 +135,122 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: widget.users.map(
-                  (user) {
-                    return TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: selectedUser == user
-                              ? WidgetStateProperty.all<Color>(
-                                  selectedUser!.colour)
-                              : WidgetStateProperty.all<Color>(Colors.grey)),
-                      onPressed: () {
-                        setState(() {
-                          if (selectedUser?.name == user.name) {
-                            selectedUser = null;
-                            return;
-                          }
-                          selectedUser = user;
-                        });
-                      },
-                      child: Text(
-                        user.name,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    );
-                  },
-                ).toList(),
-              ),
-              Expanded(
-                child: isExtractingText
-                    ? const CircularProgressIndicator()
-                    : Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 2.0,
-                            strokeAlign: BorderSide.strokeAlignOutside,
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: ListView.builder(
-                          itemCount: purchasedItems.length,
-                          itemBuilder: (context, index) {
-                            Item item = purchasedItems[index];
-
-                            return Material(
-                              child: ListTile(
-                                title: Text(item.name),
-                                subtitle:
-                                    Text('\$${item.price.toStringAsFixed(2)}'),
-                                trailing: const Icon(Icons.shopping_cart),
-                                selectedTileColor: item.selectedColour,
-                                selected: item.isSelected,
-                                selectedColor: Colors.white,
-                                onTap: () {
-                                  toggleItem(item);
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-              TextButton(
-                onPressed: () {
-                  calculateSplitCosts();
+    return RsLayout(
+        showBackButton: true,
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
+          children: [
+            Text("Toggle user select, and split the costs",
+                style: TextStyle(fontSize: 16)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: widget.users.map(
+                (user) {
+                  return TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: selectedUser == user
+                          ? WidgetStateProperty.all<Color>(selectedUser!.colour)
+                          : WidgetStateProperty.all<Color>(Colors.grey),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if (selectedUser?.name == user.name) {
+                          selectedUser = null;
+                          return;
+                        }
+                        selectedUser = user;
+                      });
+                    },
+                    child: Text(
+                      user.name,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
                 },
-                child: Text("Calculate!"),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 18),
-                child: SizedBox(
-                  child: Column(
-                    children: userCosts.entries.map((entry) {
-                      final user = entry.key;
-                      final cost = entry.value;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(user.name),
-                          Text("\$ ${cost.toStringAsFixed(2)}"),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+              ).toList(),
+            ),
+            Expanded(
+              child: isExtractingText
+                  ? const CircularProgressIndicator()
+                  : Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 1,
+                          strokeAlign: BorderSide.strokeAlignOutside,
+                        ),
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                      child: ListView.separated(
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        itemCount: purchasedItems.length,
+                        itemBuilder: (context, index) {
+                          Item item = purchasedItems[index];
+
+                          return Material(
+                            child: ListTile(
+                              title: Text(item.name),
+                              trailing: Text(
+                                '\$${item.price.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              selectedTileColor: item.selectedColour,
+                              selected: item.isSelected,
+                              selectedColor: Colors.white,
+                              onTap: () {
+                                toggleItem(item);
+                              },
+                              // shape: LinearBorder.bottom(
+                              //   side: BorderSide(color: Colors.grey, width: 1),
+                              // ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(),
+                      ),
+                    ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18),
+              child: SizedBox(
+                child: Column(
+                  children: userCosts.entries.map((entry) {
+                    final user = entry.key;
+                    final cost = entry.value;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(user.name),
+                        Text("\$ ${cost.toStringAsFixed(2)}"),
+                      ],
+                    );
+                  }).toList(),
                 ),
               ),
-              Text(
-                "Total shared cost split: \$ ${totalSharedCostSplitBetweenUsers.toStringAsFixed(2)}",
-              ),
-              Text(
-                "Total cost: \$ ${totalCost.toStringAsFixed(2)}",
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
+            ),
+            Text(
+              "Total shared cost split: \$ ${totalSharedCostSplitBetweenUsers.toStringAsFixed(2)}",
+            ),
+            Text(
+              "Total cost: \$ ${totalCost.toStringAsFixed(2)}",
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                StyledButton(
+                    label: "Go to Summary",
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => SplitSummaryPage()),
                       );
-                    },
-                    child: Text("Done"),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                    }),
+              ],
+            ),
+          ],
+        ));
   }
-}
-
-class Item {
-  String _id;
-  String name;
-  double price;
-
-  bool isSelected;
-  Color? selectedColour;
-
-  Item({required this.name, required this.price, required this.isSelected})
-      : _id = _generateUniqueId();
-
-  static String _generateUniqueId() {
-    // Combine current time with random value to ensure uniqueness
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    int randomValue = Random().nextInt(10000); // Adding some randomness
-    return '$timestamp-$randomValue';
-  }
-
-  // Factory constructor to create an Item from JSON
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
-      name: json['name'],
-      price: (json['price'] as num).toDouble(),
-      isSelected: false,
-    );
-  }
-}
-
-List<Item> extractItems(String extractedPdfText) {
-  List<Item> items = [];
-
-  // Regular expression to match item names and prices
-  // This is a basic regex, adjust it to your receipt format
-  // RegExp itemRegExp = RegExp(r"([A-Za-z\s]+)\s+\$?(\d+\.\d{2})");
-  RegExp itemRegExp = RegExp(r"([A-Za-z0-9\s^#&\-,]+)\s+(\-?\d+\.\d{2})");
-
-  // Split the extracted text into lines and iterate through each line
-  var lines = extractedPdfText.split('\n');
-  for (var line in lines) {
-    var match = itemRegExp.firstMatch(line);
-
-    if (match != null) {
-      String itemName = match.group(1)!.trim();
-      double itemPrice = double.tryParse(match.group(2)!) ?? 0.0;
-
-      if (itemPrice != 0.0) {
-        items.add(Item(name: itemName, price: itemPrice, isSelected: false));
-      }
-    }
-  }
-  return items;
 }

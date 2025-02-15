@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:receipt_split/receipt_split_page.dart';
+import 'package:receipt_split/models/item.dart';
 
 class SplitService {
   SplitService._privateConstructor();

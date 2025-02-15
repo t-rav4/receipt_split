@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:receipt_split/types/user.dart';
+import 'package:receipt_split/models/user.dart';
 import 'package:receipt_split/widgets/colour_pick_note.dart';
 
 class ListUserItem extends StatefulWidget {

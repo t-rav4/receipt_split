@@ -1,18 +1,9 @@
-import 'dart:convert';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:receipt_split/receipt_split_page.dart';
-
 import 'package:receipt_split/select_users_page.dart';
-import 'package:receipt_split/services/user_service.dart';
-import 'package:receipt_split/types/user.dart';
 import 'package:receipt_split/widgets/card_button.dart';
-
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:path_provider/path_provider.dart';
 
 // Feature 2: Capture photo of receipt to scan them instead, into app.
 //  source: https://pub.dev/packages/cunning_document_scanner

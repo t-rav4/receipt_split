@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:receipt_split/types/user.dart';
+import 'package:receipt_split/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceService {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:receipt_split/receipt_split_page.dart';
-import 'package:uuid/uuid.dart'; // TODO: remove package?
+import 'package:receipt_split/models/item.dart';
 
 class User {
   String id;

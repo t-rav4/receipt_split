@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_split/services/colour_picker_service.dart';
-import 'package:receipt_split/types/user.dart';
+import 'package:receipt_split/models/user.dart';
 
 class ColourPickNote extends StatefulWidget {
   final User user;

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:receipt_split/widgets/list_user_summary_item.dart';
+import 'package:receipt_split/widgets/page_layout.dart';
+import 'package:receipt_split/widgets/styled_button.dart';
 
 class SplitSummaryPage extends StatefulWidget {
   const SplitSummaryPage({super.key});
@@ -10,16 +13,24 @@ class SplitSummaryPage extends StatefulWidget {
 class _SplitSummaryPageState extends State<SplitSummaryPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 15.0, right: 15.0),
-          child: Column(
-            children: [
-              Text("Hello"),
-            ],
+    return RsLayout(
+      showBackButton: true,
+      content: Column(
+        children: [
+          Divider(),
+          ListUserSummaryItem(),
+          ListUserSummaryItem(),
+          ListUserSummaryItem(),
+          Container(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              children: [
+                StyledButton(label: "Save", onTap: () {}),
+                StyledButton(label: "Home", onTap: () {}),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
