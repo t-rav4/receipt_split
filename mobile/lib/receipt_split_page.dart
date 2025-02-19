@@ -27,9 +27,8 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
 
   List<Item> purchasedItems = [];
 
-  Map<Item, User?> itemToUserRecord = {};
-
   Map<User, double> userCosts = {};
+
   double totalSharedCostSplitBetweenUsers = 0.0;
   double totalCost = 0.0;
 
@@ -46,10 +45,6 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
       File file = File(widget.pdf);
       List<Item> items = await splitService.extractItemsFromReceipt(file);
 
-      // Init the map for item to users to empty
-      Map<Item, User?> emptyItemToUserMap = {
-        for (var item in items) item: null
-      };
       Map<User, double> emptyUserCostsMap = {
         for (var user in widget.users) user: 0.0
       };
@@ -57,7 +52,6 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
       setState(() {
         purchasedItems = items;
         isExtractingText = false;
-        itemToUserRecord = emptyItemToUserMap;
         userCosts = emptyUserCostsMap;
       });
 
@@ -71,53 +65,64 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
   }
 
   void toggleItem(Item item) {
-    if (selectedUser == null) {
-      if (item.isSelected) {
+    if (item.assignedUser == null) {
+      // Item is unassigned + User is selected: allocate item to user
+      if (selectedUser != null) {
         setState(() {
-          item.selectedColour = Colors.transparent;
-          item.isSelected = false;
-          itemToUserRecord.remove(item);
+          item.assignedUser = selectedUser;
+          selectedUser?.assignedItems.add(item);
         });
       }
+      calculateSplitCosts();
       return;
     }
 
-    // When selecting item with same assigned user, unassign them
-    var userToAssign =
-        itemToUserRecord[item] == selectedUser ? null : selectedUser;
+    // Item is alreayd allocated
 
-    // If the item is selected/unselected - update the colour and the mapping
-    Color newActiveColour = userToAssign?.colour ?? Colors.transparent;
+    // Unassign item if toggling with assigned user or when no user is selected
+    if (selectedUser == null || item.assignedUser == selectedUser) {
+      setState(() {
+        item.assignedUser = null;
+        selectedUser?.assignedItems.remove(item);
+      });
+      calculateSplitCosts();
+      return;
+    }
+
+    // Assign item to selected user
     setState(() {
-      item.selectedColour = newActiveColour;
-      itemToUserRecord[item] = userToAssign;
-      item.isSelected = userToAssign != null ? true : false;
-    });
+      var previouslyAssignedUser = item.assignedUser;
+      previouslyAssignedUser?.assignedItems.remove(item);
 
+      item.assignedUser = selectedUser;
+      selectedUser?.assignedItems.add(item);
+    });
+    
     calculateSplitCosts();
   }
 
   void calculateSplitCosts() {
-    double totalSharedCost = 0.0;
-
     Map<User, double> userToCostMap = {
       for (var user in widget.users) user: 0.0
     };
 
     double totalItemsCost = 0.0;
 
-    for (Item item in itemToUserRecord.keys) {
-      totalItemsCost += item.price;
-
-      var user = itemToUserRecord[item];
-
-      if (user == null) {
-        totalSharedCost += item.price;
-        continue;
+    for (User user in widget.users) {
+      var usersCost = 0.0;
+      for (var item in user.assignedItems) {
+        usersCost += item.price;
       }
 
-      // Add item price to the assigned user
-      userToCostMap[user] = userToCostMap[user]! + item.price;
+      userToCostMap[user] = usersCost;
+    }
+
+    double totalSharedCost = 0.0;
+
+    for (Item item in purchasedItems) {
+      if (item.assignedUser == null) {
+        totalSharedCost += item.price;
+      }
     }
 
     var splitCost = totalSharedCost / userToCostMap.length;
@@ -195,8 +200,9 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
                                 '\$${item.price.toStringAsFixed(2)}',
                                 style: TextStyle(fontSize: 16),
                               ),
-                              selectedTileColor: item.selectedColour,
-                              selected: item.isSelected,
+                              selectedTileColor: item.assignedUser?.colour ??
+                                  Colors.transparent,
+                              selected: item.assignedUser != null,
                               selectedColor: Colors.white,
                               onTap: () {
                                 toggleItem(item);
@@ -245,7 +251,11 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SplitSummaryPage()),
+                          builder: (context) => SplitSummaryPage(
+                            users: widget.users,
+                            userCosts: userCosts,
+                          ),
+                        ),
                       );
                     }),
               ],

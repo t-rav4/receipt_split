@@ -1,17 +1,14 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'package:receipt_split/models/user.dart';
 
 class Item {
-  String _id;
+  String id;
   String name;
   double price;
 
-  bool isSelected;
-  Color? selectedColour;
+  User? assignedUser;
 
-  Item({required this.name, required this.price, required this.isSelected})
-      : _id = _generateUniqueId();
+  Item({required this.name, required this.price}) : id = _generateUniqueId();
 
   static String _generateUniqueId() {
     // Combine current time with random value to ensure uniqueness
@@ -25,7 +22,7 @@ class Item {
     return Item(
       name: json['name'],
       price: (json['price'] as num).toDouble(),
-      isSelected: false,
+      // isSelected: false,
     );
   }
 }
@@ -48,7 +45,7 @@ List<Item> extractItems(String extractedPdfText) {
       double itemPrice = double.tryParse(match.group(2)!) ?? 0.0;
 
       if (itemPrice != 0.0) {
-        items.add(Item(name: itemName, price: itemPrice, isSelected: false));
+        items.add(Item(name: itemName, price: itemPrice));
       }
     }
   }
