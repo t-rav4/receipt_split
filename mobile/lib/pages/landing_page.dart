@@ -65,7 +65,7 @@ class _LandingPageState extends State<LandingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Receipt Split"),
+        title: Text("Receipt Split", style: TextStyle(fontWeight: FontWeight.bold),),
         actions: [
           IconButton(
             icon: Icon(Icons.settings),

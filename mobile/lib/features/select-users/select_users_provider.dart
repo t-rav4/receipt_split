@@ -30,7 +30,7 @@ class SelectUsersProvider extends ChangeNotifier {
 
   void createNewUser(String name) async {
     final user = User(
-      id: Uuid().toString(),
+      id: Uuid().v4().toString(),
       name: name,
       colour: getRandomColour(),
     );
