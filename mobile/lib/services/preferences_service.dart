@@ -7,6 +7,7 @@ class PreferenceService {
   PreferenceService._privateConstructor();
 
   static const String userKey = "saved_users";
+  static const String offlineModeKey = "offline_mode";
 
   static final PreferenceService _instance =
       PreferenceService._privateConstructor();
@@ -20,8 +21,6 @@ class PreferenceService {
     String? usersJSON = prefs.getString(userKey);
     if (usersJSON != null) {
       final List<dynamic> decodedList = jsonDecode(usersJSON);
-      print("ok");
-      print(decodedList);
       return decodedList.map((json) => User.fromJson(json)).toList();
     }
     return [];
@@ -40,5 +39,16 @@ class PreferenceService {
     users.removeWhere((u) => u.id == id);
 
     await saveUsers(users);
+  }
+
+
+  Future<bool> getOfflineMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(offlineModeKey) ?? false;
+  }
+
+  Future<void> changeOfflineMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(offlineModeKey, value);
   }
 }

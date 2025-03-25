@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,14 +15,12 @@ class UserService {
 
   final String _apiUrl = dotenv.env["API_URL"]!;
 
-  // Fetch all users
-  Future<List<User>> getUsers() async {
+  Future<List<User>> getAllUsers() async {
     try {
       final response = await http.get(Uri.parse('$_apiUrl/users/'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        // Map the fetched data to a list of User objects
         return data.map((userJson) => User.fromJson(userJson)).toList();
       } else {
         throw Exception('Failed to load users');
@@ -65,7 +62,7 @@ class UserService {
 
       final response = await http.put(Uri.parse('$_apiUrl/users/$id'),
           headers: {
-            "Content-Type": "application/json", // Ensure JSON header
+            "Content-Type": "application/json",
           },
           body: jsonEncode(request));
       if (response.statusCode == 200) {
@@ -84,7 +81,7 @@ class UserService {
     Map<String, dynamic> request = {id: id};
     await http.delete(Uri.parse('$_apiUrl/users/$id'),
         headers: {
-          "Content-Type": "application/json", // Ensure JSON header
+          "Content-Type": "application/json",
         },
         body: jsonEncode(request));
   }

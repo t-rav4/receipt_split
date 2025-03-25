@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:receipt_split/models/item.dart';
+import 'package:receipt_split/pages/split_summary_page.dart';
 import 'package:receipt_split/services/split_service.dart';
-import 'package:receipt_split/split_summary_page.dart';
 import 'package:receipt_split/models/user.dart';
 import 'package:receipt_split/widgets/page_layout.dart';
 import 'package:receipt_split/widgets/styled_button.dart';
@@ -41,7 +41,7 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
   Future<void> extractTextFromPdf() async {
     try {
       setState(() => isExtractingText = true);
-
+  
       File file = File(widget.pdf);
       List<Item> items = await splitService.extractItemsFromReceipt(file);
 
