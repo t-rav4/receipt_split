@@ -74,26 +74,24 @@ class _LandingPageState extends State<LandingPage> {
         ],
       ),
       body: SafeArea(
-        child: Expanded(
-          child: Padding(
-            padding: EdgeInsets.all(48),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CardButton(
-                  icon: Icons.attach_file,
-                  label: "Select a .pdf file from device’s storage",
-                  onTap: pickPdfFile,
-                ),
-                CardButton(
-                    icon: Icons.camera_alt_rounded,
-                    label: "Take a photo of your receipt using your camera!",
-                    onTap: () async {
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }),
-              ],
-            ),
+        child: Padding(
+          padding: EdgeInsets.all(48),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CardButton(
+                icon: Icons.attach_file,
+                label: "Select a .pdf file from device’s storage",
+                onTap: pickPdfFile,
+              ),
+              CardButton(
+                  icon: Icons.camera_alt_rounded,
+                  label: "Take a photo of your receipt using your camera!",
+                  onTap: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }),
+            ],
           ),
         ),
       ),
