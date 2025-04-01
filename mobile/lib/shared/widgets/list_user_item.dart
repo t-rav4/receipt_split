@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_split/models/user.dart';
-import 'package:receipt_split/widgets/colour_pick_note.dart';
+import 'package:receipt_split/shared/widgets/colour_pick_note.dart';
 
 class ListUserItem extends StatefulWidget {
   final User user;

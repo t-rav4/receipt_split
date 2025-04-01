@@ -1,34 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_split/models/user.dart';
-import 'package:receipt_split/services/preferences_service.dart';
 import 'package:receipt_split/services/user_service.dart';
 import 'package:receipt_split/utils/colour_utils.dart';
 import 'package:uuid/uuid.dart';
 
 class SelectUsersProvider extends ChangeNotifier {
   final UserService _userService = UserService();
-  final PreferenceService _preferenceService = PreferenceService();
 
   List<User> userOptions = [];
-  List<User> selectedUsers = [];
-  bool isOffline = false;
+  Set<User> selectedUsers = {};
 
-  SelectUsersProvider() {
-    _loadOfflineMode();
-  }
+  List<User> get selectedUsersList => selectedUsers.toList();
 
-  Future<void> _loadOfflineMode() async {
-    isOffline = await _preferenceService.getOfflineMode();
-    notifyListeners();
-  }
-
-  Future<List<User>> fetchUsers() async {
+  void fetchUsers() async {
     userOptions = await _userService.getAllUsers();
     notifyListeners();
-    return userOptions;
   }
 
-   User createNewUser(String name) {
+  User createNewUser(String name, {bool initiallySelected = false}) {
+    // TODO: would likely make sense here if the userservice created the user
     final user = User(
       id: Uuid().v4().toString(),
       name: name,
@@ -36,6 +26,11 @@ class SelectUsersProvider extends ChangeNotifier {
     );
 
     userOptions.add(user);
+
+    if (initiallySelected) {
+      toggleUserSelection(user.id);
+    }
+
     notifyListeners();
     return user;
   }
@@ -45,6 +40,7 @@ class SelectUsersProvider extends ChangeNotifier {
         await _userService.updateUser(user.id, user.name, user.colour);
 
     int index = userOptions.indexWhere((u) => u.id == user.id);
+
     if (index != -1) {
       userOptions[index] = updatedUser;
       notifyListeners();
@@ -52,10 +48,11 @@ class SelectUsersProvider extends ChangeNotifier {
   }
 
   void toggleUserSelection(String userId) {
-    if (selectedUsers.any((user) => user.id == userId)) {
-      selectedUsers.removeWhere((user) => user.id == userId);
+    final user = userOptions.firstWhere((user) => user.id == userId);
+
+    if (selectedUsers.contains(user)) {
+      selectedUsers.remove(user);
     } else {
-      final user = userOptions.firstWhere((user) => user.id == userId);
       selectedUsers.add(user);
     }
 

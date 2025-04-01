@@ -1,9 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:receipt_split/features/select-users/select_users_page.dart';
-import 'package:receipt_split/pages/settings_page.dart';
-import 'package:receipt_split/widgets/card_button.dart';
+import 'package:receipt_split/features/select_users/presentation/select_users_page.dart';
+import 'package:receipt_split/features/settings/presentation/settings_page.dart';
+import 'package:receipt_split/shared/widgets/card_button.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});

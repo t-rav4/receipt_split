@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:receipt_split/features/select-users/select_users_provider.dart';
-import 'package:receipt_split/features/select-users/user_list.dart';
+import 'package:receipt_split/features/select_users/presentation/select_users_provider.dart';
+import 'package:receipt_split/features/select_users/user_list.dart';
 
 class OfflineUserInput extends StatelessWidget {
   final TextEditingController textController = TextEditingController();
@@ -23,8 +23,11 @@ class OfflineUserInput extends StatelessWidget {
               onPressed: () {
                 if (textController.text.isEmpty) return;
 
-                var user = provider.createNewUser(textController.text);
-                provider.toggleUserSelection(user.id);
+                provider.createNewUser(
+                  textController.text,
+                  initiallySelected: true,
+                );
+
                 textController.clear();
               },
             ),

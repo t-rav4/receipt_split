@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:receipt_split/models/user.dart';
-import 'package:receipt_split/widgets/list_user_summary_item.dart';
-import 'package:receipt_split/widgets/page_layout.dart';
-import 'package:receipt_split/widgets/styled_button.dart';
+import 'package:receipt_split/shared/widgets/list_user_summary_item.dart';
+import 'package:receipt_split/shared/widgets/page_layout.dart';
+import 'package:receipt_split/shared/widgets/styled_button.dart';
 
 class SplitSummaryPage extends StatefulWidget {
   final List<User> users;

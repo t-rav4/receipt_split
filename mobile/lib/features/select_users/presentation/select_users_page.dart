@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:receipt_split/features/select-users/offline_user_input.dart';
-import 'package:receipt_split/features/select-users/select_users_provider.dart';
-import 'package:receipt_split/features/select-users/selected_pdf_info.dart';
-import 'package:receipt_split/features/select-users/user_list_section.dart';
-import 'package:receipt_split/features/splitting/receipt_split_page.dart';
-import 'package:receipt_split/widgets/page_layout.dart';
-import 'package:receipt_split/widgets/styled_button.dart';
+import 'package:receipt_split/features/select_users/offline_user_input.dart';
+import 'package:receipt_split/features/select_users/presentation/select_users_provider.dart';
+import 'package:receipt_split/features/select_users/selected_pdf_info.dart';
+import 'package:receipt_split/features/select_users/user_list_section.dart';
+import 'package:receipt_split/features/splitting/presentation/receipt_split_page.dart';
+import 'package:receipt_split/shared/providers/offline_provider.dart';
+import 'package:receipt_split/shared/widgets/page_layout.dart';
+import 'package:receipt_split/shared/widgets/styled_button.dart';
 
 const minRequiredUsers = 2;
 
@@ -17,6 +18,8 @@ class SelectUsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var offlineProvider = Provider.of<OfflineProvider>(context);
+
     return ChangeNotifierProvider(
       create: (_) => SelectUsersProvider(),
       child: Consumer<SelectUsersProvider>(
@@ -31,9 +34,9 @@ class SelectUsersPage extends StatelessWidget {
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: provider.isOffline
+                    child: offlineProvider.isOffline
                         ? OfflineUserInput()
-                        : UserListSection(provider),
+                        : UserListSection(),
                   ),
                 ),
                 Container(
@@ -54,7 +57,7 @@ class SelectUsersPage extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => ReceiptSplitPage(
                               pdf: selectedPdf,
-                              users: provider.selectedUsers,
+                              users: provider.selectedUsersList,
                             ),
                           ),
                         );
