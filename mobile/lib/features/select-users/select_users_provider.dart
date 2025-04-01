@@ -28,7 +28,7 @@ class SelectUsersProvider extends ChangeNotifier {
     return userOptions;
   }
 
-  void createNewUser(String name) async {
+   User createNewUser(String name) {
     final user = User(
       id: Uuid().v4().toString(),
       name: name,
@@ -37,6 +37,7 @@ class SelectUsersProvider extends ChangeNotifier {
 
     userOptions.add(user);
     notifyListeners();
+    return user;
   }
 
   void updateUser(User user) async {

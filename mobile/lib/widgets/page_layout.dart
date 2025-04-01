@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 
 class RsLayout extends StatelessWidget {
   final Widget content;
-  final bool? showBackButton;
   final String? title;
 
-  const RsLayout(
-      {super.key,
-      required this.content,
-      this.showBackButton = false,
-      this.title});
+  final EdgeInsetsGeometry? padding;
+
+  const RsLayout({super.key, required this.content, this.title, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +15,9 @@ class RsLayout extends StatelessWidget {
         title: title != null ? Text(title!) : null,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: content,
-              ),
-            ),
-          ],
+        child: Container(
+          padding: padding ?? const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: content,
         ),
       ),
     );

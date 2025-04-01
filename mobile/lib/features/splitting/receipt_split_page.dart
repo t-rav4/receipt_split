@@ -141,7 +141,6 @@ class _ReceiptSplitPageState extends State<ReceiptSplitPage> {
   @override
   Widget build(BuildContext context) {
     return RsLayout(
-        showBackButton: true,
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,

@@ -44,7 +44,6 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return RsLayout(
       title: "Settings",
-      showBackButton: true,
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

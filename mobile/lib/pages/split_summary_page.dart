@@ -20,7 +20,7 @@ class _SplitSummaryPageState extends State<SplitSummaryPage> {
   Widget build(BuildContext context) {
     return RsLayout(
       title: "Split Cost Summary",
-      showBackButton: true,
+
       content: Column(
         children: [
           Expanded(

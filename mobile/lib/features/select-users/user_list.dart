@@ -17,14 +17,6 @@ class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
         itemBuilder: (context, index) {
-          if (index == users.length) {
-            return ElevatedButton(
-              onPressed: () {
-                
-              },
-              child: const Text("Add New User"),
-            );
-          }
           User user = users[index];
           return ListUserItem(
               user: user,

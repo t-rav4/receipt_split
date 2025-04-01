@@ -74,7 +74,7 @@ class _LandingPageState extends State<LandingPage> {
         ],
       ),
       body: SafeArea(
-        child: Padding(
+        child: Container(
           padding: EdgeInsets.all(48),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

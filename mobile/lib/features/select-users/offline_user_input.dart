@@ -23,7 +23,8 @@ class OfflineUserInput extends StatelessWidget {
               onPressed: () {
                 if (textController.text.isEmpty) return;
 
-                provider.createNewUser(textController.text);
+                var user = provider.createNewUser(textController.text);
+                provider.toggleUserSelection(user.id);
                 textController.clear();
               },
             ),
