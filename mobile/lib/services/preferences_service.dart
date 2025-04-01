@@ -44,7 +44,7 @@ class PreferenceService {
 
   Future<bool> getOfflineMode() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(offlineModeKey) ?? false;
+    return prefs.getBool(offlineModeKey) ?? true;
   }
 
   Future<void> changeOfflineMode(bool value) async {
