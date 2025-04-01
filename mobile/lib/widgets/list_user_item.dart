@@ -36,8 +36,16 @@ class _ListUserItemState extends State<ListUserItem> {
       );
     }
 
-    return Material(
-      child: ListTile(
+    return Material( 
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        child: ListTile(
           leading: ColourPickNote(
             user: widget.user,
             onSelect: (user) {
@@ -54,7 +62,9 @@ class _ListUserItemState extends State<ListUserItem> {
           selectedColor: Colors.black,
           selected: widget.isSelected,
           onTap: () => widget.onPress(),
-          contentPadding: EdgeInsets.only(left: 12)),
+          contentPadding: EdgeInsets.only(left: 12),
+        ),
+      ),
     );
   }
 }
