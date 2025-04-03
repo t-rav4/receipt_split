@@ -18,6 +18,7 @@ class CardButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Card(
+          margin: EdgeInsets.symmetric(horizontal: 40),
           color: Colors.blueAccent,
           clipBehavior: Clip.hardEdge,
           child: InkWell(

@@ -5,13 +5,16 @@ import 'package:receipt_split/shared/widgets/list_user_item.dart';
 class UserList extends StatelessWidget {
   final List<User> users;
   final List<String> selectedIds;
-  final Function(String) onSelectUser;
+  final Function(User) onSelectUser;
+  // final Function(User) onUpdateUser;
 
-  const UserList(
-      {super.key,
-      required this.users,
-      required this.selectedIds,
-      required this.onSelectUser});
+  const UserList({
+    super.key,
+    required this.users,
+    required this.selectedIds,
+    required this.onSelectUser,
+    // required this.onUpdateUser,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +24,12 @@ class UserList extends StatelessWidget {
         return ListUserItem(
             user: user,
             onPress: () {
-              onSelectUser(user.id);
+              onSelectUser(user);
             },
             isSelected: selectedIds.contains(user.id),
-            updateUser: (User user) {});
+            updateUser: (User user) {
+              // onUpdateUser(user); TODO
+            });
       },
       separatorBuilder: (context, index) => SizedBox(height: 6),
       itemCount: users.length,

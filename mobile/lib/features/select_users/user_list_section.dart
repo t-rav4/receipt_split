@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:receipt_split/features/select_users/receipt_split_provider.dart';
 import 'package:receipt_split/features/select_users/user_list.dart';
 import 'package:receipt_split/features/shared/loading_spinner.dart';
 import 'package:receipt_split/models/user.dart';

@@ -4,7 +4,7 @@ import 'package:receipt_split/models/user.dart';
 class UserChipsSelect extends StatelessWidget {
   final List<User> users;
   final User? selectedUser;
-  final Function(User?) onChipSelect;
+  final Function(User) onChipSelect;
 
   const UserChipsSelect(
       {super.key,
@@ -25,7 +25,7 @@ class UserChipsSelect extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              onChipSelect(selectedUser?.name == user.name ? null : user);
+              onChipSelect(user);
             },
             child: Text(
               user.name,

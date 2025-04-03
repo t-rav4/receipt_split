@@ -10,6 +10,14 @@ class User {
 
   User({required this.id, required this.name, required this.colour});
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) || (other is User && other.id == id);
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
   factory User.fromJson(Map<String, dynamic> json) {
     // Check if fields are null or missing and provide default values if necessary
     return User(
